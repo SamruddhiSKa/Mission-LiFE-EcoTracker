@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mission LiFE EcoTracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --eco-primary: #2d6a4f;
+        --eco-secondary: #52b788;
+        --eco-accent: #95d5b2;
+        --eco-bg: #f0fff4;
+        --eco-surface: #ffffff;
+        --eco-muted: #74c69d;
+        --text-dark: #1b4332;
+        --text-mid: #40916c;
+        --text-light: #b7e4c7;
+        --slate: #4a5568;
+        --slate-light: #edf2f7;
+        --amber: #f4a261;
+        --warning: #f6c453;
+        --shadow-soft: 0 14px 28px rgba(45, 106, 79, 0.12);
+        --shadow-card: 0 16px 30px rgba(35, 86, 64, 0.08);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        background: linear-gradient(180deg, #f7fff8 0%, #edfdf2 100%);
+        color: var(--text-dark);
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+
+      img, svg { display: block; }
+
+      a { text-decoration: none; }
+
+      button {
+        font: inherit;
+        border: 0;
+        background: none;
+        cursor: pointer;
+      }
+
+      .page-shell {
+        min-height: 100vh;
+      }
+
+      .container {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid rgba(45, 106, 79, 0.15);
+        box-shadow: 0 6px 18px rgba(45, 106, 79, 0.04);
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 74px;
+        gap: 20px;
+      }
+
+      .brand-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand-logo {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--eco-primary), var(--eco-secondary));
+        display: grid;
+        place-items: center;
+        box-shadow: inset 0 0 0 2px rgba(255,255,255,0.45);
+      }
+
+      .brand-name {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--eco-primary);
+        letter-spacing: -0.02em;
+      }
+
+      .brand-badge {
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(82, 183, 136, 0.12);
+        color: var(--eco-primary);
+        font-size: 0.67rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+
+      .profile-strip {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .community-ticker {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(82, 183, 136, 0.1);
+        border: 1px solid rgba(82, 183, 136, 0.2);
+        color: var(--eco-primary);
+        border-radius: 999px;
+        padding: 10px 16px 10px 12px;
+        font-size: 0.81rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .ticker-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--eco-secondary);
+        box-shadow: 0 0 0 6px rgba(82, 183, 136, 0.15);
+        animation: pulse 1.8s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.25); opacity: 0.78; }
+      }
+
+      .user-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--eco-secondary), #75d6a1);
+        color: white;
+        font-size: 0.82rem;
+        font-weight: 700;
+        display: grid;
+        place-items: center;
+        box-shadow: 0 8px 20px rgba(82, 183, 136, 0.2);
+      }
+
+      .user-name-row {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.1;
+      }
+
+      .user-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--text-dark);
+      }
+
+      .user-label {
+        font-size: 0.72rem;
+        color: var(--text-mid);
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        background: var(--eco-bg);
+      }
+
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='500' height='300' viewBox='0 0 500 300' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cg opacity='0.04'%3E%3Cpath d='M80 230C150 90 221 60 275 112C329 164 362 160 418 73C446 27 466 21 500 20V280H80V230Z' fill='%232D6A4F'/%3E%3Cpath d='M18 248C52 192 101 128 150 120C202 111 238 160 293 196C336 225 370 228 434 189C470 167 489 160 500 162V280H18V248Z' fill='%2352B788'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 420px 220px;
+      }
+
+      .hero-inner {
+        position: relative;
+        padding: 42px 0 24px;
+      }
+
+      .hero-copy {
+        text-align: center;
+        max-width: 760px;
+        margin: 0 auto 30px;
+      }
+
+      .hero h1 {
+        margin: 0 0 12px;
+        font-size: clamp(2rem, 4vw, 3.05rem);
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+        color: var(--eco-primary);
+      }
+
+      .hero p {
+        margin: 0;
+        font-size: 1.05rem;
+        color: var(--text-mid);
+      }
+
+      .habit-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(190px, 1fr));
+        gap: 18px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .habit-card {
+        position: relative;
+        width: 100%;
+        padding: 20px 18px 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.96);
+        border: 1.5px solid var(--eco-accent);
+        box-shadow: var(--shadow-card);
+        text-align: left;
+        transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease, border-color 0.22s ease;
+        min-height: 170px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .habit-card:hover:not(:disabled) {
+        background: var(--eco-bg);
+        border-color: var(--eco-secondary);
+        transform: translateY(-3px);
+        box-shadow: 0 18px 25px rgba(45, 106, 79, 0.12);
+      }
+
+      .habit-card:active:not(:disabled) {
+        transform: scale(0.99);
+      }
+
+      .habit-card.logged {
+        background: linear-gradient(135deg, var(--eco-primary), var(--eco-secondary));
+        color: white;
+        border-color: transparent;
+        transform: scale(0.985);
+        box-shadow: 0 20px 30px rgba(45, 106, 79, 0.14);
+      }
+
+      .habit-card.logged .habit-title,
+      .habit-card.logged .habit-impact,
+      .habit-card.logged .habit-points,
+      .habit-card.logged .habit-state {
+        color: white;
+      }
+
+      .habit-card.logged .habit-card-badge {
+        background: rgba(255,255,255,0.18);
+        color: white;
+      }
+
+      .habit-card.bouncing {
+        animation: action-bounce 150ms ease-in;
+      }
+
+      @keyframes action-bounce {
+        0% { transform: scale(1); }
+        40% { transform: scale(0.96); }
+        70% { transform: scale(1.03); }
+        100% { transform: scale(1); }
+      }
+
+      .habit-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .habit-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        background: rgba(149, 213, 178, 0.2);
+        display: grid;
+        place-items: center;
+        font-size: 1.5rem;
+      }
+
+      .habit-card.logged .habit-icon {
+        background: rgba(255,255,255,0.18);
+      }
+
+      .habit-check {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.22);
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+        font-weight: 800;
+        opacity: 0;
+        transform: scale(0.7);
+        transition: all 0.2s ease;
+      }
+
+      .habit-card.logged .habit-check {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .habit-title {
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.35;
+        font-weight: 700;
+        color: var(--text-dark);
+        min-height: 42px;
+      }
+
+      .habit-impact,
+      .habit-points {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.77rem;
+        font-weight: 700;
+      }
+
+      .habit-impact {
+        background: rgba(82, 183, 136, 0.12);
+        color: var(--eco-secondary);
+      }
+
+      .habit-points {
+        background: rgba(244, 162, 97, 0.12);
+        color: var(--amber);
+      }
+
+      .habit-state {
+        margin-top: auto;
+        padding-top: 8px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: var(--text-mid);
+      }
+
+      .habit-card:disabled {
+        cursor: default;
+      }
+
+      .dashboard {
+        padding: 28px 0 22px;
+      }
+
+      .chart-section {
+        padding: 28px 0 34px;
+        background: var(--eco-surface);
+        border-top: 1px solid rgba(45, 106, 79, 0.15);
+      }
+
+      .section-title {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 0 0 18px;
+        color: var(--text-dark);
+        font-size: clamp(1.5rem, 2vw, 2rem);
+        letter-spacing: -0.03em;
+      }
+
+      .section-subtitle {
+        color: var(--text-mid);
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 0;
+      }
+
+      .chart-card {
+        height: 300px;
+        padding: 24px;
+        border: 1.5px solid var(--eco-accent);
+        border-radius: 14px;
+        background: var(--eco-bg);
+      }
+
+      .chart-card canvas {
+        width: 100%;
+        height: 100%;
+      }
+
+      .section-heading {
+        margin: 0 0 20px;
+        font-size: clamp(1.6rem, 2vw, 2.2rem);
+        letter-spacing: -0.03em;
+        color: var(--text-dark);
+      }
+
+      .stats-row {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-bottom: 26px;
+      }
+
+      .stat-card {
+        flex: 1 1 220px;
+        min-width: 180px;
+        background: white;
+        border: 1.5px solid var(--eco-accent);
+        border-radius: 16px;
+        padding: 24px 20px;
+        box-shadow: 0 10px 18px rgba(45, 106, 79, 0.04);
+      }
+
+      .stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .stat-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: rgba(149, 213, 178, 0.18);
+        display: grid;
+        place-items: center;
+        font-size: 1.45rem;
+      }
+
+      .stat-value {
+        margin-top: 16px;
+        font-size: clamp(2rem, 2.5vw, 2.5rem);
+        line-height: 1;
+        font-weight: 800;
+        color: var(--eco-primary);
+      }
+
+      .stat-label {
+        margin-top: 8px;
+        color: var(--text-mid);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+      }
+
+      .progress-wrap {
+        background: rgba(255,255,255,0.96);
+        border: 1.5px solid rgba(149, 213, 178, 0.6);
+        border-radius: 18px;
+        padding: 22px 18px 16px;
+        box-shadow: var(--shadow-card);
+      }
+
+      .progress-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 18px;
+        color: var(--text-mid);
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .progress-bar-shell {
+        position: relative;
+        height: 16px;
+        background: linear-gradient(180deg, #ebf7ef, #e0f3e7);
+        border-radius: 999px;
+        border: 1px solid rgba(45, 106, 79, 0.08);
+        overflow: visible;
+      }
+
+      .progress-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 64%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--eco-primary), var(--eco-secondary));
+        box-shadow: 0 8px 14px rgba(82, 183, 136, 0.18);
+        transition: width 0.6s ease;
+      }
+
+      .milestone-row {
+        position: relative;
+        margin-top: 10px;
+        height: 16px;
+      }
+
+      .milestone {
+        position: absolute;
+        top: 0;
+        width: 2px;
+        height: 12px;
+        background: rgba(45, 106, 79, 0.38);
+        border-radius: 999px;
+      }
+
+      .milestone::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: -18px;
+        font-size: 0.62rem;
+        color: var(--text-mid);
+      }
+
+      .progress-text {
+        margin-top: 12px;
+        color: var(--text-mid);
+        font-size: 0.82rem;
+        font-weight: 600;
+      }
+
+      .activity-panel {
+        margin-top: 18px;
+        background: rgba(255,255,255,0.96);
+        border: 1.5px solid rgba(149, 213, 178, 0.6);
+        border-radius: 18px;
+        padding: 20px 18px;
+        box-shadow: var(--shadow-card);
+      }
+
+      .activity-list {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .activity-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: var(--eco-bg);
+        color: var(--text-dark);
+        font-size: 0.85rem;
+      }
+
+      .activity-item time,
+      .activity-empty {
+        color: var(--text-mid);
+        font-size: 0.78rem;
+      }
+
+      .activity-empty {
+        margin: 0;
+      }
+
+      .app-status {
+        margin: 0 0 16px;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: #fff3f0;
+        color: #9c2f20;
+        font-size: 0.85rem;
+      }
+
+      .app-status:empty {
+        display: none;
+      }
+
+      .community-grid {
+        display: grid;
+        grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
+        gap: 22px;
+        padding: 18px 0 36px;
+      }
+
+      .badge-panel,
+      .leaderboard-panel {
+        background: rgba(255,255,255,0.8);
+        border: 1.5px solid rgba(149, 213, 178, 0.55);
+        border-radius: 22px;
+        box-shadow: var(--shadow-card);
+        padding: 22px 18px;
+      }
+
+      .panel-title {
+        margin: 0 0 18px;
+        font-size: 1.35rem;
+        letter-spacing: -0.03em;
+        color: var(--text-dark);
+      }
+
+      .badge-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(140px, 1fr));
+        gap: 16px;
+      }
+
+      .badge-item {
+        position: relative;
+        background: linear-gradient(180deg, #fff, #f8fffa);
+        border-radius: 18px;
+        border: 1.5px solid rgba(149, 213, 178, 0.6);
+        min-height: 170px;
+        padding: 18px 12px 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: box-shadow 0.25s ease, transform 0.25s ease;
+      }
+
+      .badge-item:hover { transform: translateY(-2px); }
+
+      .badge-item.unlocked {
+        box-shadow: 0 0 0 1px rgba(255,193,7,0.25), 0 0 12px rgba(255,193,7,0.18);
+      }
+
+      .badge-item.locked {
+        opacity: 0.4;
+        filter: grayscale(1);
+      }
+
+      .badge-item.unlocked::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.4) 35%, transparent 65%);
+        transform: translateX(-100%);
+        animation: shimmer 3.2s ease-in-out infinite;
+      }
+
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        28%, 100% { transform: translateX(100%); }
+      }
+
+      .badge-icon {
+        width: 58px;
+        height: 58px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, rgba(82,183,136,0.15), rgba(149, 213, 178, 0.25));
+        display: grid;
+        place-items: center;
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+      }
+
+      .badge-item.unlocked .badge-icon {
+        background: linear-gradient(135deg, rgba(255,193,7,0.15), rgba(255, 218, 109, 0.25));
+        box-shadow: 0 0 14px rgba(255,193,7,0.22);
+      }
+
+      .badge-name {
+        margin: 0;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text-dark);
+      }
+
+      .badge-description {
+        margin-top: 8px;
+        font-size: 0.73rem;
+        color: var(--text-mid);
+        line-height: 1.45;
+      }
+
+      .lock-overlay {
+        position: absolute;
+        right: 12px;
+        top: 10px;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(74,85,104,0.12);
+        display: grid;
+        place-items: center;
+        font-size: 0.9rem;
+      }
+
+      .leaderboard-table-wrap {
+        overflow: hidden;
+        border-radius: 16px;
+        border: 1px solid rgba(149, 213, 178, 0.38);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+      }
+
+      thead th {
+        text-align: left;
+        padding: 12px 14px;
+        font-size: 0.78rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-mid);
+        background: rgba(240,255,244,0.9);
+      }
+
+      tbody td {
+        padding: 12px 14px;
+        border-top: 1px solid rgba(149, 213, 178, 0.3);
+        font-size: 0.9rem;
+        color: var(--text-dark);
+      }
+
+      tbody tr {
+        transition: background 0.18s ease;
+      }
+
+      tbody tr:hover {
+        background: rgba(240,255,244,0.8);
+      }
+
+      .leaderboard-row.you {
+        background: rgba(240,255,244,0.7);
+        border-left: 3px solid var(--eco-secondary);
+      }
+
+      .leaderboard-row.you td:first-child {
+        font-weight: 800;
+      }
+
+      .leaderboard-row.you td {
+        font-weight: 700;
+      }
+
+      .rank-emoji {
+        font-size: 1.1rem;
+      }
+
+      .leaderboard-caption {
+        margin-top: 12px;
+        color: var(--text-mid);
+        font-size: 0.76rem;
+        text-align: right;
+      }
+
+      .toast {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        min-width: 240px;
+        max-width: 310px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #2d6a4f, #52b788);
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 700;
+        box-shadow: 0 18px 30px rgba(45, 106, 79, 0.18);
+        opacity: 0;
+        transform: translateX(25px);
+        pointer-events: none;
+      }
+
+      .toast.show {
+        animation: toast-in 0.35s ease forwards;
+      }
+
+      .toast.hide {
+        animation: toast-out 0.35s ease forwards;
+      }
+
+      @keyframes toast-in {
+        from { opacity: 0; transform: translateX(25px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      @keyframes toast-out {
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(25px); }
+      }
+
+      @media (max-width: 980px) {
+        .topbar-inner {
+          flex-wrap: wrap;
+          justify-content: center;
+          padding: 12px 0;
+        }
+
+        .community-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .habit-grid {
+          grid-template-columns: repeat(2, minmax(150px, 1fr));
+        }
+
+        .brand-badge {
+          display: none;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .topbar-inner {
+          align-items: flex-start;
+        }
+
+        .profile-strip {
+          width: 100%;
+          justify-content: space-between;
+          flex-wrap: wrap;
+        }
+
+        .user-meta {
+          order: 2;
+          flex: 1 1 100%;
+        }
+
+        .community-ticker {
+          order: 1;
+          width: 100%;
+          justify-content: center;
+        }
+
+        .habit-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .badge-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .chart-card {
+          height: 260px;
+          padding: 14px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="container topbar-inner">
+          <div class="brand-wrap" aria-label="Mission LiFE EcoTracker brand">
+            <div class="brand-logo" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.7 3.5C16.5 5.2 18.9 8.7 18.9 12.4C18.9 16.7 15.4 20.2 11 20.2C9 20.2 7.2 19.4 5.8 18.1C8.2 17.7 10.7 15.9 12.1 13.2C13.9 9.9 13.2 6.8 12.7 3.5Z" fill="white"/>
+                <path d="M11.3 4.4C9.7 6.5 8.8 9 8.8 11.8C8.8 13.7 9.5 15.5 10.8 16.9C9.5 16.9 8.1 16.4 6.8 15.5C5.5 14.5 4.4 13 3.9 11.2C3.2 8.5 4.3 5.7 7 4.1C8.1 3.5 9.9 3.7 11.3 4.4Z" fill="rgba(255,255,255,0.8)"/>
+              </svg>
+            </div>
+            <div class="brand-name">Mission LiFE EcoTracker</div>
+            <div class="brand-badge">India's Green Initiative</div>
+          </div>
+
+          <div class="profile-strip">
+            <div class="user-meta">
+              <div class="avatar">RK</div>
+              <div class="user-name-row">
+                <span class="user-name">Ravi Kumar</span>
+                <span class="user-label">Eco Warrior · Level 3</span>
+              </div>
+            </div>
+            <div class="community-ticker" aria-live="polite">
+              <span class="ticker-dot" aria-hidden="true"></span>
+              <span id="communityTickerText">Loading community total…</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="container hero-inner">
+            <div class="hero-copy">
+              <h1>Log Your Green Action for Today</h1>
+              <p>Every small action counts. Track your impact, earn points, protect the planet.</p>
+            </div>
+
+            <div class="habit-grid" id="habitGrid" aria-label="Daily eco actions"></div>
+          </div>
+        </section>
+
+        <section class="dashboard">
+          <div class="container">
+            <h2 class="section-heading">Your Personal Impact Dashboard</h2>
+
+            <div class="stats-row">
+              <article class="stat-card">
+                <div class="stat-top">
+                  <span class="stat-label">CO₂ Offset</span>
+                  <span class="stat-icon" aria-hidden="true">🌍</span>
+                </div>
+                <div class="stat-value" id="statCo2">—</div>
+                <div class="stat-label" style="letter-spacing: 0.09em; margin-top: 10px;">kg</div>
+              </article>
+
+              <article class="stat-card">
+                <div class="stat-top">
+                  <span class="stat-label">Water Saved</span>
+                  <span class="stat-icon" aria-hidden="true">💧</span>
+                </div>
+                <div class="stat-value" id="statWater">—</div>
+                <div class="stat-label" style="letter-spacing: 0.09em; margin-top: 10px;">L</div>
+              </article>
+
+              <article class="stat-card">
+                <div class="stat-top">
+                  <span class="stat-label">Current Streak</span>
+                  <span class="stat-icon" aria-hidden="true">🔥</span>
+                </div>
+                <div class="stat-value" id="statStreak">—</div>
+                <div class="stat-label" style="letter-spacing: 0.09em; margin-top: 10px;">Days</div>
+              </article>
+            </div>
+
+            <p id="appStatus" class="app-status" role="alert"></p>
+
+            <div class="progress-wrap">
+              <div class="progress-header">
+                <span>Progress to next tier</span>
+                <strong>Gold Eco Guardian (500 pts)</strong>
+              </div>
+
+              <div class="progress-bar-shell" aria-label="Points progress">
+                <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+              </div>
+
+              <div class="milestone-row" aria-hidden="true">
+                <span class="milestone" data-label="100" style="left: 20%;"></span>
+                <span class="milestone" data-label="200" style="left: 40%;"></span>
+                <span class="milestone" data-label="300" style="left: 60%;"></span>
+                <span class="milestone" data-label="400" style="left: 80%;"></span>
+              </div>
+
+              <div id="progressText" class="progress-text">Loading saved points…</div>
+            </div>
+
+            <section class="activity-panel" aria-labelledby="activityHeading">
+              <h3 id="activityHeading" class="panel-title">Recent Eco Actions</h3>
+              <ul id="activityList" class="activity-list">
+                <li class="activity-empty">Loading your saved actions…</li>
+              </ul>
+            </section>
+          </div>
+        </section>
+
+        <section class="chart-section">
+          <div class="container">
+            <h2 class="section-title">
+              7-Day CO₂ Impact
+              <span class="section-subtitle" id="weekly-total"></span>
+            </h2>
+            <div class="chart-card">
+              <canvas id="co2-chart" height="220" aria-label="Bar chart of CO2 saved over the last 7 days"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <section class="container community-grid">
+          <div class="badge-panel">
+            <h3 class="panel-title">Badges Unlocked</h3>
+            <div class="badge-grid">
+              <div class="badge-item unlocked">
+                <div class="badge-icon">🌿</div>
+                <p class="badge-name">Plastic-Free Pioneer</p>
+                <div class="badge-description">Avoided single-use plastic 7 days straight</div>
+              </div>
+
+              <div class="badge-item unlocked">
+                <div class="badge-icon">☀️</div>
+                <p class="badge-name">Solar Advocate</p>
+                <div class="badge-description">Switched to renewable energy habits</div>
+              </div>
+
+              <div class="badge-item unlocked">
+                <div class="badge-icon">🚴</div>
+                <p class="badge-name">Green Commuter</p>
+                <div class="badge-description">Chose green transport 5 times</div>
+              </div>
+
+              <div class="badge-item locked">
+                <div class="badge-icon">♻️</div>
+                <div class="lock-overlay">🔒</div>
+                <p class="badge-name">Zero Waste Hero</p>
+                <div class="badge-description">Composted for a full week</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="leaderboard-panel">
+            <h3 class="panel-title">Community Leaderboard (Pune)</h3>
+            <div class="leaderboard-table-wrap">
+              <table aria-label="Community leaderboard">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Neighborhood</th>
+                    <th>CO₂ Saved</th>
+                    <th>Points</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderboardBody">
+                  <tr><td colspan="5">Loading leaderboard…</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="leaderboard-caption">Pune Metro Area · Community data stored locally</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script>
+      let weeklyChart = null;
+
+      const state = {
+        targetPoints: 500,
+        totals: { co2Saved: 0, waterSaved: 0, points: 0, streakDays: 0 },
+        logs: [],
+        todayActionIds: new Set(),
+        pendingActions: new Set(),
+        leaderboard: [],
+        communityCo2Saved: 0,
+        apiReady: false,
+        actionMeta: [
+          { id: 'bike', title: 'Rode bicycle / public transit', co2: 2.5, water: 0, points: 25, icon: '🚲' },
+          { id: 'bag', title: 'Used cloth bag instead of plastic', co2: 0.5, water: 2, points: 10, icon: '👜' },
+          { id: 'lights', title: 'Switched to LED / turned off appliances', co2: 1.2, water: 0, points: 15, icon: '💡' },
+          { id: 'compost', title: 'Composted kitchen waste', co2: 1.0, water: 5, points: 20, icon: '♻️' },
+          { id: 'carpool', title: 'Carpooled to work', co2: 1.5, water: 0, points: 18, icon: '🚗' },
+          { id: 'no_meat_meal', title: 'Had a plant-based meal', co2: 2.0, water: 15, points: 22, icon: '🥗' },
+          { id: 'reusable_bottle', title: 'Used a reusable water bottle', co2: 0.4, water: 1, points: 8, icon: '🫙' },
+          { id: 'line_dry', title: 'Line-dried clothes (no dryer)', co2: 1.1, water: 0, points: 14, icon: '👕' }
+        ]
+      };
+
+      const progressFill = document.getElementById('progressFill');
+      const progressText = document.getElementById('progressText');
+      const tickerText = document.getElementById('communityTickerText');
+      const toast = document.getElementById('toast');
+      const habitGrid = document.getElementById('habitGrid');
+      const activityList = document.getElementById('activityList');
+      const leaderboardBody = document.getElementById('leaderboardBody');
+      const appStatus = document.getElementById('appStatus');
+
+      function formatPoints(value) {
+        return new Intl.NumberFormat('en-IN').format(value);
+      }
+
+      async function apiRequest(path, options = {}) {
+        const response = await fetch(path, {
+          ...options,
+          headers: {
+            ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+            ...options.headers
+          }
+        });
+        const result = await response.json();
+
+        if (!response.ok) {
+          const error = new Error(result.message || result.error || `Request failed (${response.status})`);
+          error.status = response.status;
+          error.code = result.code;
+          throw error;
+        }
+
+        return result;
+      }
+
+      function animateValue(element, start, end, suffix = '', duration = 600) {
+        const startTime = performance.now();
+        const format = (n) => {
+          if (suffix === 'kg') return n.toFixed(1);
+          if (suffix === 'L' || suffix === 'Days') return `${Math.round(n)}`;
+          return `${Math.round(n)}`;
+        };
+
+        function step(now) {
+          const progress = Math.min((now - startTime) / duration, 1);
+          const eased = progress < 0.5
+            ? 2 * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+          const current = start + (end - start) * eased;
+          element.textContent = format(current);
+
+          if (progress < 1) {
+            requestAnimationFrame(step);
+          } else {
+            element.textContent = format(end);
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      function updateProgressUI() {
+        const ratio = Math.min(state.totals.points / state.targetPoints, 1);
+        progressFill.style.width = `${ratio * 100}%`;
+
+        const remaining = Math.max(state.targetPoints - state.totals.points, 0);
+        progressText.textContent = `${formatPoints(state.totals.points)} / ${formatPoints(state.targetPoints)} points · ${formatPoints(remaining)} pts to go`;
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.remove('hide');
+        toast.classList.add('show');
+
+        clearTimeout(showToast.timeoutId);
+        showToast.timeoutId = setTimeout(() => {
+          toast.classList.remove('show');
+          toast.classList.add('hide');
+          setTimeout(() => toast.classList.remove('hide'), 350);
+        }, 2500);
+      }
+
+      function renderActions() {
+        habitGrid.innerHTML = '';
+
+        state.actionMeta.forEach((action) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'habit-card';
+          button.setAttribute('data-action-id', action.id);
+          button.disabled = !state.apiReady || state.todayActionIds.has(action.id) || state.pendingActions.size > 0;
+
+          const isLogged = state.todayActionIds.has(action.id);
+          if (isLogged) {
+            button.classList.add('logged');
+          }
+
+          button.innerHTML = `
+            <div class="habit-header">
+              <div class="habit-icon">${action.icon}</div>
+              <div class="habit-check">✓</div>
+            </div>
+            <h3 class="habit-title">${action.title}</h3>
+            <div class="habit-impact">+${action.co2.toFixed(1)} kg CO₂ saved</div>
+            ${action.water ? `<div class="habit-impact" style="background: rgba(82,183,136,0.12); color: var(--eco-primary);">+${action.water} L water</div>` : ''}
+            <div class="habit-points">+${action.points} pts</div>
+            <div class="habit-state">${isLogged ? 'Logged Today ✓' : !state.apiReady ? 'Server unavailable' : state.pendingActions.size ? 'Saving action…' : 'Tap to log'}</div>
+          `;
+
+          button.addEventListener('click', async () => {
+            if (state.todayActionIds.has(action.id) || state.pendingActions.has(action.id)) return;
+            button.classList.remove('bouncing');
+            void button.offsetWidth;
+            button.classList.add('bouncing');
+
+            state.pendingActions.add(action.id);
+            const actionButtons = [...habitGrid.querySelectorAll('.habit-card')];
+            actionButtons.forEach((actionButton) => {
+              actionButton.disabled = true;
+            });
+            button.querySelector('.habit-state').textContent = 'Saving…';
+            appStatus.textContent = '';
+
+            try {
+              const previousTotals = { ...state.totals };
+              const result = await apiRequest('/api/logs', {
+                method: 'POST',
+                body: JSON.stringify({
+                  actionId: action.id,
+                  impact: { co2: action.co2, water: action.water, points: action.points },
+                  timestamp: new Date().toISOString()
+                })
+              });
+
+              state.totals = result.totals;
+              state.logs = result.logs;
+              state.todayActionIds = new Set(result.todayActionIds);
+              state.leaderboard = result.leaderboard;
+              state.communityCo2Saved = result.communityCo2Saved;
+              button.classList.add('logged');
+              button.querySelector('.habit-state').textContent = 'Logged Today ✓';
+
+              animateValue(document.getElementById('statCo2'), previousTotals.co2Saved, state.totals.co2Saved, 'kg');
+              animateValue(document.getElementById('statWater'), previousTotals.waterSaved, state.totals.waterSaved, 'L');
+              animateValue(document.getElementById('statStreak'), previousTotals.streakDays, state.totals.streakDays, 'Days');
+              updateStatsAndProgress();
+              renderActivity();
+              await Promise.all([loadLeaderboard(), loadWeeklyChart()]);
+              showToast(`🌿 Action logged! +${result.log.points} pts earned`);
+            } catch (error) {
+              if (error.status === 409 && error.code === 'already_logged_today') {
+                state.todayActionIds.add(action.id);
+                button.classList.add('logged');
+                button.querySelector('.habit-state').textContent = 'Logged Today ✓';
+                showToast('Already logged today — come back tomorrow! 🌿');
+              } else {
+                appStatus.textContent = `Unable to save action: ${error.message}. Please try again.`;
+                showToast('Could not save your action. Please try again.');
+              }
+            } finally {
+              state.pendingActions.delete(action.id);
+              actionButtons.forEach((actionButton) => {
+                const isLogged = state.todayActionIds.has(actionButton.dataset.actionId);
+                actionButton.disabled = isLogged;
+                if (!isLogged) actionButton.querySelector('.habit-state').textContent = 'Tap to log';
+              });
+            }
+          });
+
+          habitGrid.appendChild(button);
+        });
+      }
+
+      function updateStatsAndProgress() {
+        tickerText.textContent = `${state.communityCo2Saved.toFixed(1)} kg CO₂ saved community-wide`;
+        updateProgressUI();
+      }
+
+      function renderActivity() {
+        activityList.innerHTML = '';
+
+        if (!state.logs.length) {
+          const empty = document.createElement('li');
+          empty.className = 'activity-empty';
+          empty.textContent = 'No actions logged yet. Choose a green action above to get started.';
+          activityList.appendChild(empty);
+          return;
+        }
+
+        state.logs.forEach((log) => {
+          const item = document.createElement('li');
+          item.className = 'activity-item';
+          const description = document.createElement('span');
+          description.textContent = `${log.actionName} · +${log.co2Saved.toFixed(1)} kg CO₂ · +${log.points} pts`;
+          const time = document.createElement('time');
+          time.dateTime = log.createdAt;
+          time.textContent = new Date(log.createdAt).toLocaleString();
+          item.append(description, time);
+          activityList.appendChild(item);
+        });
+      }
+
+      function renderLeaderboard() {
+        leaderboardBody.innerHTML = '';
+        const medals = ['🥇', '🥈', '🥉'];
+
+        state.leaderboard.forEach((entry, index) => {
+          const row = document.createElement('tr');
+          if (entry.isCurrentUser) row.className = 'leaderboard-row you';
+
+          const rank = document.createElement('td');
+          rank.textContent = medals[index] || String(index + 1);
+          if (index < medals.length) rank.className = 'rank-emoji';
+          const name = document.createElement('td');
+          name.textContent = entry.isCurrentUser ? 'You' : entry.name;
+          const neighborhood = document.createElement('td');
+          neighborhood.textContent = entry.neighborhood;
+          const co2 = document.createElement('td');
+          co2.textContent = `${entry.co2Saved.toFixed(1)} kg`;
+          const points = document.createElement('td');
+          points.textContent = `${formatPoints(entry.points)} pts`;
+          row.append(rank, name, neighborhood, co2, points);
+          leaderboardBody.appendChild(row);
+        });
+      }
+
+      async function loadLeaderboard() {
+        try {
+          const result = await apiRequest('/api/leaderboard');
+          state.leaderboard = result.leaderboard;
+          state.communityCo2Saved = result.communityCo2Saved;
+          renderLeaderboard();
+          updateStatsAndProgress();
+        } catch (error) {
+          appStatus.textContent = `Unable to refresh leaderboard: ${error.message}.`;
+        }
+      }
+
+      async function loadWeeklyChart() {
+        try {
+          const result = await apiRequest('/api/stats/weekly');
+          document.getElementById('weekly-total').textContent = `${result.total_7day.toFixed(1)} kg saved this week`;
+
+          if (!window.Chart) {
+            throw new Error('Chart.js did not load. Check your internet connection and refresh.');
+          }
+
+          if (weeklyChart) {
+            weeklyChart.destroy();
+          }
+
+          weeklyChart = new Chart(document.getElementById('co2-chart'), {
+            type: 'bar',
+            data: {
+              labels: result.weekly.map((day) => day.label),
+              datasets: [{
+                data: result.weekly.map((day) => day.co2),
+                backgroundColor: '#52b788',
+                borderColor: '#2d6a4f',
+                borderWidth: 1.5,
+                borderRadius: 7,
+                maxBarThickness: 44
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                title: { display: false },
+                legend: { display: false },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => `${Number(context.raw).toFixed(1)} kg CO₂ saved`
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  grid: { display: false }
+                },
+                y: {
+                  beginAtZero: true,
+                  min: 0,
+                  title: {
+                    display: true,
+                    text: 'kg CO₂'
+                  },
+                  ticks: {
+                    precision: 0
+                  }
+                }
+              }
+            }
+          });
+        } catch (error) {
+          appStatus.textContent = `Unable to load weekly CO₂ chart: ${error.message}.`;
+        }
+      }
+
+      async function initializeApp() {
+        try {
+          const logsResult = await apiRequest('/api/logs');
+          await Promise.all([loadLeaderboard(), loadWeeklyChart()]);
+
+          state.totals = logsResult.totals;
+          state.logs = logsResult.logs;
+          state.todayActionIds = new Set(logsResult.todayActionIds);
+          state.apiReady = true;
+          document.getElementById('statCo2').textContent = state.totals.co2Saved.toFixed(1);
+          document.getElementById('statWater').textContent = `${Math.round(state.totals.waterSaved)}`;
+          document.getElementById('statStreak').textContent = `${state.totals.streakDays}`;
+          updateStatsAndProgress();
+          renderActions();
+          renderActivity();
+          renderLeaderboard();
+        } catch (error) {
+          appStatus.textContent = `Unable to load saved data: ${error.message}. Start the app with npm start and refresh this page.`;
+          progressText.textContent = 'Saved points unavailable.';
+          tickerText.textContent = 'Community total unavailable';
+          activityList.innerHTML = '<li class="activity-empty">Saved activity is unavailable until the server is running.</li>';
+          renderActions();
+        }
+      }
+
+      initializeApp();
+    </script>
+  </body>
+</html>
